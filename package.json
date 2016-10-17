@@ -1,0 +1,19 @@
+{
+  "name": "tp-db",
+  "version": "1.0.0",
+  "description": "Database project in TechnoPark",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/maxzaycev/tp-db.git"
+  },
+  "author": "Max Zaytsev <zaytsev@mail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/maxzaycev/tp-db/issues"
+  },
+  "homepage": "https://github.com/maxzaycev/tp-db#readme"
+}
