@@ -12,22 +12,22 @@ const server = http.createServer((req, res) => {
 	const method = req.method.toLowerCase();
 
     const api = new apiQuery(method, path, query);
-    console.log(`[${method}]`, path, query);
+    console.log();
+    console.log(`[${req.method}]`, reqUrl.pathname);
 
 		//data
-    if (req.method == 'post') {
-        let rawBody = '';
+    if (method === 'post') {
+        let body = '';
 
         req.on('data', (data)=>{
-            rawBody += data;
+            body += data;
 
-            if (rawBody.length > 1e6)
+            if (body.length > 1e6)
                 req.connection.destroy();
         });
 
         req.on('end', ()=>{
-            const body = qs.parse(rawBody);
-            console.log('[body]', body);
+            console.log('body: ', body);
 
             const result = api.exec(body);
         	res.writeHead(result.error || 200, {'Content-Type': 'application/json'});
@@ -39,6 +39,8 @@ const server = http.createServer((req, res) => {
         });
     }
     else {
+        console.log('query: ', query);
+
         const result = api.exec();
         res.writeHead(result.error || 200, {'Content-Type': 'application/json'});
 		res.end(JSON.stringify(result.text) || 
@@ -47,8 +49,6 @@ const server = http.createServer((req, res) => {
 					error: http.STATUS_CODES[result.error]
 				}));
     }
-
-    	//response
 })
 
 server.on('clientError', (err, socket) => {

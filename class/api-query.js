@@ -1,7 +1,8 @@
 'use strict'
 
 const executors = {}
-	executors['api'] = require('../api')
+	executors['db'] = {}
+	executors['db']['api'] = require('../api')
 
 class ApiQuery{
 	constructor(method, path, query){

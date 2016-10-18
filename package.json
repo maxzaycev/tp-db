@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/maxzaycev/tp-db/issues"
   },
-  "homepage": "https://github.com/maxzaycev/tp-db#readme"
+  "homepage": "https://github.com/maxzaycev/tp-db#readme",
+  "dependencies": {
+    "mysql": "^2.11.1"
+  }
 }
