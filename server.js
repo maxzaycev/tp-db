@@ -1,34 +1,54 @@
 'use strict'
+
 const http = require('http');
 const url = require('url');
 const qs = require('querystring');
+const apiQuery = require('./class/api-query');
 
 const server = http.createServer((req, res) => {
 	const reqUrl = url.parse(req.url);
 	const query = (reqUrl.query)?qs.parse(reqUrl.query):null;
-	const path = reqUrl.pathname;
-	const method = req.method;
+	const path = reqUrl.pathname.split('/');
+	const method = req.method.toLowerCase();
 
-	if (req.method == 'POST') {
-        let body = '';
+    const api = new apiQuery(method, path, query);
+    console.log(`[${method}]`, path, query);
 
-        req.on('data', function (data) {
-            body += data;
+		//data
+    if (req.method == 'post') {
+        let rawBody = '';
 
-            if (body.length > 1e6)
+        req.on('data', (data)=>{
+            rawBody += data;
+
+            if (rawBody.length > 1e6)
                 req.connection.destroy();
         });
 
-        req.on('end', function () {
-            let post = qs.parse(body);
-            console.log('[BODY]', post);
+        req.on('end', ()=>{
+            const body = qs.parse(rawBody);
+            console.log('[body]', body);
+
+            const result = api.exec(body);
+        	res.writeHead(result.error || 200, {'Content-Type': 'application/json'});
+			res.end(JSON.stringify(result.text) || 
+				JSON.stringify({
+					code: result.error,
+					error: http.STATUS_CODES[result.error]
+				}));
         });
     }
-    
-	console.log('['+method+']', path, query);
+    else {
+        const result = api.exec();
+        res.writeHead(result.error || 200, {'Content-Type': 'application/json'});
+		res.end(JSON.stringify(result.text) || 
+				JSON.stringify({
+					code: result.error,
+					error: http.STATUS_CODES[result.error]
+				}));
+    }
 
-	res.writeHead(200, {'Content-Type': 'application/json'});
-	res.end(JSON.stringify({}));
+    	//response
 })
 
 server.on('clientError', (err, socket) => {
