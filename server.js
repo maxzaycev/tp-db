@@ -3,7 +3,7 @@
 const http = require('http');
 const url = require('url');
 const qs = require('querystring');
-const ApiQuery = require('class/api-query');
+const ApiQuery = require('./class/api-query');
 
 function responseError(res, error){
     res.writeHead(error, {'Content-Type': 'application/json'});

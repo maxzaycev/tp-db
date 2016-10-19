@@ -1,6 +1,6 @@
 'use strict'
 
-const UrlApiExecutor = require('class/url-api-executor');
+const UrlApiExecutor = require('../class/url-api-executor');
 
 const create = new UrlApiExecutor((query)=>{
 	return {'i`m':'create forum'}

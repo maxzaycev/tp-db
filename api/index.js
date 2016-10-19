@@ -1,11 +1,11 @@
 'use strict'
 
-const db = require('db');
+const db = require('../db');
 
 module.exports.forum = require('./forum');
 module.exports.user = require('./user');
 
-const UrlApiExecutor = require('class/url-api-executor');
+const UrlApiExecutor = require('../class/url-api-executor');
 
 const clear = new UrlApiExecutor(null, (query, body)=>{
 	return new Promise((resolve, reject) => {
