@@ -3,11 +3,11 @@
 const UrlApiExecutor = require('../class/url-api-executor');
 
 const create = new UrlApiExecutor((query)=>{
-	return {'i`m':'create forum'}
+	return {'im':'create forum'}
 });
 
 const show = new UrlApiExecutor((query)=>{
-	return {'i`m':'show forum'}
+	return {'im':'show forum'}
 });
 
 module.exports.create = create;
