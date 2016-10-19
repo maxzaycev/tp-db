@@ -3,17 +3,33 @@
 const http = require('http');
 const url = require('url');
 const qs = require('querystring');
-const apiQuery = require('./class/api-query');
+const ApiQuery = require('class/api-query');
+
+function responseError(res, error){
+    res.writeHead(error, {'Content-Type': 'application/json'});
+    res.end(JSON.stringify({
+        code: error,
+        error: http.STATUS_CODES[error]
+    }));
+}
+
+function response(res, promise){
+    res.writeHead(200, {'Content-Type': 'application/json'});
+    promise.then((body) => {
+        res.end(JSON.stringify(body));
+    });
+}
 
 const server = http.createServer((req, res) => {
 	const reqUrl = url.parse(req.url);
 	const query = (reqUrl.query)?qs.parse(reqUrl.query):null;
 	const path = reqUrl.pathname.split('/');
 	const method = req.method.toLowerCase();
-
-    const api = new apiQuery(method, path, query);
+    
     console.log();
     console.log(`[${req.method}]`, reqUrl.pathname);
+
+    const api = new ApiQuery(method, path, query);
 
 		//data
     if (method === 'post') {
@@ -30,24 +46,18 @@ const server = http.createServer((req, res) => {
             console.log('body: ', body);
 
             const result = api.exec(body);
-        	res.writeHead(result.error || 200, {'Content-Type': 'application/json'});
-			res.end(JSON.stringify(result.text) || 
-				JSON.stringify({
-					code: result.error,
-					error: http.STATUS_CODES[result.error]
-				}));
+            (result.error)?
+                responseError(res, result.error):
+                response(res, result.promise);
         });
     }
     else {
         console.log('query: ', query);
 
         const result = api.exec();
-        res.writeHead(result.error || 200, {'Content-Type': 'application/json'});
-		res.end(JSON.stringify(result.text) || 
-				JSON.stringify({
-					code: result.error,
-					error: http.STATUS_CODES[result.error]
-				}));
+        (result.error)?
+            responseError(res, result.error):
+            response(res, result.promise);
     }
 })
 

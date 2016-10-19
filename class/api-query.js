@@ -37,7 +37,7 @@ class ApiQuery{
 
 		if (typeof executor[this.method] === 'function')
 			return {
-				text: executor[this.method](this.query, this.body),
+				promise: executor[this.method](this.query, this.body),
 				error: 0
 			};
 		else

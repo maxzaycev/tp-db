@@ -1,27 +1,37 @@
 'use strict'
 
-const db = require('../db');
+const db = require('db');
 
-const forum = require('./forum');
+module.exports.forum = require('./forum');
+module.exports.user = require('./user');
 
-module.exports.forum = forum;
-
-const UrlApiExecutor = require('../class/url-api-executor');
+const UrlApiExecutor = require('class/url-api-executor');
 
 const clear = new UrlApiExecutor(null, (query, body)=>{
-	return {code: 0, response: "OK"}
+	return new Promise((resolve, reject) => {
+		db.query('DELETE FROM users');
+		db.query('DELETE FROM threads');
+		db.query('DELETE FROM posts');
+		db.query('DELETE FROM forums');
+
+		resolve({"code": 0, "response": "OK"});
+	});
 });
 
 const status = new UrlApiExecutor((query)=>{
-	return {
-		"code": 0, 
-		"response": {
-			"user": 100000, 
-			"thread": 1000,
-			"forum": 100,
-			"post": 1000000
-			}
-		}
+	return new Promise((resolve, reject) => {
+		db.query(`SELECT
+					COUNT(u.id) AS user,
+					COUNT(p.isDeleted) AS post,
+					COUNT(t.isDeleted) AS thread,
+					COUNT(f.id) AS forum
+				FROM
+					users AS u,
+					posts AS p,
+					threads AS t,
+					forums AS f`, (err, rows)=>{ resolve(rows[0]) });
+	});
+
 }, null);
 
 module.exports.clear = clear;
