@@ -2,8 +2,8 @@
 Database project in TechnoPark on Node.js
 
 ## install
-* create MySQL config file (use [Sample Config](db/config.sample.json))
-* execute 
+Create MySQL config file (use [Sample Config](db/config.sample.json))
+Execute 
 ```sh
 	npm install && npm start
 ```
