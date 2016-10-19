@@ -2,6 +2,6 @@
   "connectionLimit" : 10,
   "host"            : "localhost",
   "user"            : "root",
-  "password"        : "xZtD4Egw",
+  "password"        : "password",
   "database"        : "mydb"
 }
