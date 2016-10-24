@@ -1,9 +1,10 @@
-'use strict'
+'use strict';
 
 const http = require('http');
 const url = require('url');
 const qs = require('querystring');
-const ApiQuery = require('./class/api-query');
+
+const Router = require('./class/router');
 
 function responseError(res, error){
     res.writeHead(error, {'Content-Type': 'application/json'});
@@ -29,7 +30,7 @@ const server = http.createServer((req, res) => {
     console.log();
     console.log(`[${req.method}]`, reqUrl.pathname);
 
-    const api = new ApiQuery(method, path, query);
+    const router = new Router(method, path, query);
 
 		//data
     if (method === 'post') {
@@ -45,7 +46,7 @@ const server = http.createServer((req, res) => {
         req.on('end', ()=>{
             console.log('body: ', body);
 
-            const result = api.exec(body);
+            const result = router.route(body);
             (result.error)?
                 responseError(res, result.error):
                 response(res, result.promise);
@@ -54,12 +55,12 @@ const server = http.createServer((req, res) => {
     else {
         console.log('query: ', query);
 
-        const result = api.exec();
+        const result = router.route();
         (result.error)?
             responseError(res, result.error):
             response(res, result.promise);
     }
-})
+});
 
 server.on('clientError', (err, socket) => {
 	socket.end('HTTP/1.1 400 Bad Request\r\n\r\n');

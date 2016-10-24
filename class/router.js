@@ -1,17 +1,17 @@
-'use strict'
+'use strict';
 
-const executors = {}
-	executors['db'] = {}
-	executors['db']['api'] = require('../api')
+const executors = {};
+	executors['db'] = {};
+	executors['db']['api'] = require('../api');
 
-class ApiQuery{
+class Router{
 	constructor(method, path, query){
 		this.method = method;
 		this.path = path;
 		this.query = query;
 	}
 
-	getExecutor(path){
+	getExecutor(){
 		let executor = executors;
 		let isFound = this.path.every((r)=>{
 			if (r !== '')
@@ -25,15 +25,15 @@ class ApiQuery{
 		return (isFound)?executor:null;
 	}
 
-	exec(body){
+	route(body){
 		if(body)
 			this.body = body;
 		
-		let executor = this.getExecutor(this.path)
+		let executor = this.getExecutor();
 
 			//Not found 404
 		if (!executor)
-			return {error: 404}
+			return {error: 404};
 
 		if (typeof executor[this.method] === 'function')
 			return {
@@ -46,4 +46,4 @@ class ApiQuery{
 	}
 }
 
-module.exports = ApiQuery;
+module.exports = Router;

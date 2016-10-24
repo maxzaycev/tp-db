@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 const db = require('../db');
 
@@ -8,7 +8,7 @@ module.exports.user = require('./user');
 const UrlApiExecutor = require('../class/url-api-executor');
 
 const clear = new UrlApiExecutor(null, (query, body)=>{
-	return new Promise((resolve, reject) => {
+	return new Promise((resolve) => {
 		db.query('DELETE FROM users');
 		db.query('DELETE FROM threads');
 		db.query('DELETE FROM posts');
@@ -19,7 +19,7 @@ const clear = new UrlApiExecutor(null, (query, body)=>{
 });
 
 const status = new UrlApiExecutor((query)=>{
-	return new Promise((resolve, reject) => {
+	return new Promise((resolve) => {
 		db.query(`SELECT
 					COUNT(u.id) AS user,
 					COUNT(p.isDeleted) AS post,

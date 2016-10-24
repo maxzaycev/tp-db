@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 const UrlApiExecutor = require('../class/url-api-executor');
 
