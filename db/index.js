@@ -1,12 +1,8 @@
 'use strict';
-var mysql = require('mysql');
+let mysql = require('mysql');
+let config = require('./config');
 
-var pool  = mysql.createPool({
-  connectionLimit : 10,
-  host            : 'localhost',
-  user            : 'root',
-  password        :  process.env.PW,
-  database        : 'mydb'
-});
+
+let pool  = mysql.createPool(config);
 
 module.exports = pool;
