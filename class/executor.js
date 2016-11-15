@@ -1,6 +1,6 @@
 'use strict';
 
-class UrlApiExecutor{
+class Executor{
 	constructor(get, post){
 		this.get = get;
 		this.post = post;
@@ -14,4 +14,4 @@ class UrlApiExecutor{
 	// }
 }
 
-module.exports = UrlApiExecutor;
+module.exports = Executor;

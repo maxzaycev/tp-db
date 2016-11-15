@@ -5,9 +5,9 @@ const db = require('../db');
 module.exports.forum = require('./forum');
 module.exports.user = require('./user');
 
-const UrlApiExecutor = require('../class/url-api-executor');
+const Executor = require('../class/executor');
 
-const clear = new UrlApiExecutor(null, (query, body)=>{
+const clear = new Executor(null, (query, body)=>{
 	return new Promise((resolve) => {
 		db.query('DELETE FROM users');
 		db.query('DELETE FROM threads');
@@ -18,7 +18,7 @@ const clear = new UrlApiExecutor(null, (query, body)=>{
 	});
 });
 
-const status = new UrlApiExecutor((query)=>{
+const status = new Executor((query)=>{
 	return new Promise((resolve) => {
 		db.query(`SELECT
 					COUNT(u.id) AS user,

@@ -1,12 +1,12 @@
 'use strict';
 
-const UrlApiExecutor = require('../class/url-api-executor');
+const Executor = require('../class/executor');
 
-const create = new UrlApiExecutor((query)=>{
+const create = new Executor((query)=>{
 	return {'im':'create forum'}
 });
 
-const show = new UrlApiExecutor((query)=>{
+const show = new Executor((query)=>{
 	return {'im':'show forum'}
 });
 
