@@ -4,6 +4,8 @@ const db = require('../db');
 
 module.exports.forum = require('./forum');
 module.exports.user = require('./user');
+module.exports.thread = require('./thread');
+module.exports.post = require('./post');
 
 const Executor = require('../class/executor');
 
