@@ -1,5 +1,5 @@
 const db = require('../db');
-const Executor = require('../class/executor');
+//const Executor = require('../class/executor');
 
 const create = function *() {
   let newUser = this.request.body;

@@ -1,5 +1,5 @@
 const db = require('../db');
-const Executor = require('../class/executor');
+//const Executor = require('../class/executor');
 
 module.exports.forum = require('./forum');
 module.exports.user = require('./user');

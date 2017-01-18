@@ -1,5 +1,5 @@
 const db = require('../db');
-const Executor = require('../class/executor');
+//const Executor = require('../class/executor');
 
 const close = function *() {
   let closeThread = this.request.body;
