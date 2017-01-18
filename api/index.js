@@ -9,10 +9,10 @@ const Executor = require('../class/executor');
 
 const clear = new Executor(null, (query, body)=>{
 	return new Promise((resolve) => {
-		db.query('DELETE FROM users');
-		db.query('DELETE FROM threads');
-		db.query('DELETE FROM posts');
-		db.query('DELETE FROM forums');
+		db.query('truncate table users');
+		db.query('truncate table threads');
+		db.query('truncate table posts');
+		db.query('truncate table forums');
 
 		resolve({"code": 0, "response": "OK"});
 	});
@@ -20,12 +20,12 @@ const clear = new Executor(null, (query, body)=>{
 
 const status = new Executor((query)=>{
 	return new Promise((resolve) => {
-		db.query(`SELECT
-					COUNT(u.id) AS user,
-					COUNT(p.isDeleted) AS post,
-					COUNT(t.isDeleted) AS thread,
-					COUNT(f.id) AS forum
-				FROM
+		db.query(`select
+					count(u.id) AS user,
+					count(p.isDeleted) AS post,
+					count(t.isDeleted) AS thread,
+					count(f.id) AS forum
+				from
 					users AS u,
 					posts AS p,
 					threads AS t,
