@@ -1,7 +1,5 @@
-const moment = require('moment');
-const logger = require('koa-logger');
-
-const mysql = require('../config');
+const db = require('../db');
+const Executor = require('../class/executor');
 
 const create = function *() {
   let newForum = this.request.body;

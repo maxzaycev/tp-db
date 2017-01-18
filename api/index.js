@@ -1,13 +1,10 @@
-'use strict';
-
 const db = require('../db');
+const Executor = require('../class/executor');
 
 module.exports.forum = require('./forum');
 module.exports.user = require('./user');
 module.exports.thread = require('./thread');
 module.exports.post = require('./post');
-
-const Executor = require('../class/executor');
 
 const clear = new Executor(null, (query, body)=>{
 	return new Promise((resolve) => {
