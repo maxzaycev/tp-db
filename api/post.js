@@ -2,30 +2,28 @@ const db = require('../db');
 const Executor = require('../class/executor');
 
 module.exports.list = new Executor((query)=>{
-    if (!req.query.forum && !req.query.thread) {
-        res.end(error_message(3));
-        return;
+    if (!query.query.forum && !query.query.thread) {
+        return (error_message(3));
     }
-    var query = "SELECT * FROM posts WHERE " + (req.query.forum? "forum='" + req.query.forum: "thread='" + req.query.thread) + "' ";
-    if (req.query.since) {
-        query = query + "AND date >= '" + req.query.since + "' ";
+    let query = "SELECT * FROM posts WHERE " + (query.query.forum? "forum='" + query.query.forum: "thread='" + query.query.thread) + "' ";
+    if (query.query.since) {
+        query = query + "AND date >= '" + query.query.since + "' ";
     }
-    if (req.query.order == "asc") {
+    if (query.query.order == "asc") {
         query = query + "ORDER BY date ";
     } else {
         query = query + "ORDER BY date DESC ";
     }
-    if (req.query.limit) {
-        query = query + "LIMIT " + req.query.limit;
+    if (query.query.limit) {
+        query = query + "LIMIT " + query.query.limit;
     }
     query = query + ";";
     db.query(query, function(err, row) {
         if(err) {
            ;//console.log(err);
-            res.end(error_message(3));
-            return;
+            return (error_message(3));
         }
-        for(var i = 0; i < row.length; i++) {
+        for(let i = 0; i < row.length; i++) {
             row[i].isApproved = !!row[i].isApproved;
             row[i].isHighlighted = !!row[i].isHighlighted;
             row[i].isDeleted = !!row[i].isDeleted;
@@ -33,43 +31,41 @@ module.exports.list = new Executor((query)=>{
             date = JSON.stringify(row[i].date);
             row[i].date = date.substr(1,10) + " " + date.substr(12,8);
         }
-        res.end(JSON.stringify({code: 0, response: row}));
+        return (JSON.stringify({code: 0, response: row}));
     });
 };
 
 module.exports.details = new Executor((query)=>{
-    if(!req.query.post) {
-        res.end(error_message(2));
+    if(!query.query.post) {
+        return (error_message(2));
         return;
     }
-    db.query("SELECT * FROM posts WHERE id = ?;", req.query.post, function(err, rows) {
+    db.query("SELECT * FROM posts WHERE id = ?;", query.query.post, function(err, rows) {
         if(err || !rows.length) {
            ;//console.log(err);
-            res.end(error_message(1));
-            return;
+            return (error_message(1));
         }
-        var answ = {code:0, response: clone_obj(rows[0])};
-        res.end(JSON.stringify(answ));
+        let result = {code:0, response: clone_obj(rows[0])};
+        return (JSON.stringify(result));
     });
 };
 
 module.exports.create = new Executor(null, (query, body)=>{
-    db.query("INSERT INTO posts SET ?", req.body, function(err, row) {
+    db.query("INSERT INTO posts SET ?", query.body, function(err, row) {
         if (err) {
            ;//console.log(err);
-            res.end(error_message(3));
-            return;
+            return (error_message(3));
         }
-        var id = row.insertId;
-        if(!req.body.parent) {
-            var query = "UPDATE posts SET mpath = '" + id + "' WHERE id = " + id + ";";
-            var lol = db.query(query, function(err) {
+        let id = row.insertId;
+        if(!query.body.parent) {
+            let query = "UPDATE posts SET mpath = '" + id + "' WHERE id = " + id + ";";
+            let lol = db.query(query, function(err) {
                 if(err)
                    ;//console.log(err);
             });
         } else {
-            var query = "UPDATE posts SET mpath = CONCAT(mpath, '\\\\', " + id + ") WHERE id = " + id + ";";
-            var lol = db.query(query, function(err) {
+            let query = "UPDATE posts SET mpath = CONCAT(mpath, '\\\\', " + id + ") WHERE id = " + id + ";";
+            let lol = db.query(query, function(err) {
                 if(err)
                    ;//console.log(err);
             });
@@ -77,113 +73,100 @@ module.exports.create = new Executor(null, (query, body)=>{
         db.query("SELECT * FROM posts WHERE id = ?;", id, function(err, row) {
             if(err) {
                ;//console.log(err);
-                res.end(error_message(4));
-                return;
+                return (error_message(4));
             }
-            var answ = {code: 0, response: row[0]};
-            res.end(JSON.stringify(answ));
+            let result = {code: 0, response: row[0]};
+            return (JSON.stringify(result));
         });
 
     });
 };
 
 module.exports.remove = new Executor(null, (query, body)=>{
-    if (!req.body.post) {
-        res.end(error_message(2));
-        return;
+    if (!query.body.post) {
+        return (error_message(2));
     }
-    db.query("UPDATE posts SET isDeleted = 1 WHERE id = ?;", req.body.post, function(err, row) {
+    db.query("UPDATE posts SET isDeleted = 1 WHERE id = ?;", query.body.post, function(err, row) {
         if(err) {
            ;//console.log(err);
-            res.end(error_message(5));
-            return;
+            return (error_message(5));
         }
         if(!row.affectedRows) {
-            res.end(error_message(1));
-            return;
+            return (error_message(1));
         }
-        var answ = {code:0, response: {post : req.body.post}};
-        res.end(JSON.stringify(answ));
-        db.query("UPDATE threads SET posts = posts - 1 WHERE id = (SELECT thread FROM posts WHERE id = ?);", req.body.post, function(err){});
+        let result = {code:0, response: {post : query.body.post}};
+        return (JSON.stringify(result));
+        db.query("UPDATE threads SET posts = posts - 1 WHERE id = (SELECT thread FROM posts WHERE id = ?);", query.body.post, function(err){});
     });
 };
 
 module.exports.restore = new Executor(null, (query, body)=> {
-    if (!req.body.post) {
-        res.end(error_message(2));
-        return;
+    if (!query.body.post) {
+        return (error_message(2));
     }
-    db.query("UPDATE posts SET isDeleted = 0 WHERE id = ?;", req.body.post, function(err, row) {
+    db.query("UPDATE posts SET isDeleted = 0 WHERE id = ?;", query.body.post, function(err, row) {
         if(err) {
            ;//console.log(err);
-            res.end(error_message(3));
-            return;
+            return (error_message(3));
         }
         if(!row.affectedRows) {
-            res.end(error_message(1));
-            return;
+            return (error_message(1));
         }
-        var answ = {code:0, response: {post : req.body.post}};
-        res.end(JSON.stringify(answ));
-        db.query("UPDATE threads SET posts = posts + 1 WHERE id = (SELECT thread FROM posts WHERE id = ?);", req.body.post, function(err){});
+        let result = {code:0, response: {post : query.body.post}};
+        return (JSON.stringify(result));
+        db.query("UPDATE threads SET posts = posts + 1 WHERE id = (SELECT thread FROM posts WHERE id = ?);", query.body.post, function(err){});
     });
 };
 
 module.exports.update = new Executor(null, (query, body)=>{
-    if (!req.body.post || !req.body.message) {
-        res.end(error_message(2));
-        return;
+    if (!query.body.post || !query.body.message) {
+        return (error_message(2));
     }
-    var instead = [req.body.message, req.body.post];
+    let instead = [query.body.message, query.body.post];
     db.query("UPDATE posts SET message = ? WHERE id = ?;", instead, function(err, row) {
         if(err) {
            ;//console.log(err);
-            res.end(error_message(3));
-            return;
+            return (error_message(3));
         }
         if(!row.affectedRows) {
-            res.end(error_message(1));
-            return;
+            return (error_message(1));
         }
-        db.query("SELECT * FROM posts WHERE id = ?;", req.body.post, function(err, row) {
+        db.query("SELECT * FROM posts WHERE id = ?;", query.body.post, function(err, row) {
             row[0].isApproved = !!row[0].isApproved;
             row[0].isHighlighted = !!row[0].isHighlighted;
             row[0].isDeleted = !!row[0].isDeleted;
             row[0].isEdited = !!row[0].isEdited;
             date = JSON.stringify(row[0].date);
             row[0].date = date.substr(1,10) + " " + date.substr(12,8);
-            var answ = {code: 0, response: row[0]};
-            res.end(JSON.stringify(answ));
+            let result = {code: 0, response: row[0]};
+            return (JSON.stringify(result));
         });
     });
 };
 
 module.exports.vote = new Executor(null, (query, body)=>{
-    if (!req.body.post || !(req.body.vote == 1 || req.body.vote == -1)) {
-        res.end(error_message(2));
-        return;
+    if (!query.body.post || !(query.body.vote == 1 || query.body.vote == -1)) {
+        return (error_message(2));
     }
-    var like = req.body.vote == 1?"likes":"dislikes";
-    var query = "UPDATE posts SET " + like + " = " + like + " + 1, points = points " + (req.body.vote == 1?"+":"-") +" 1 WHERE id = " + req.body.post;
+    let like = query.body.vote == 1?"likes":"dislikes";
+    let query = "UPDATE posts SET " + like + " = " + like + " + 1, points = points " + (query.body.vote == 1?"+":"-") +" 1 WHERE id = " + query.body.post;
     db.query(query, function(err, row) {
         if(err) {
            ;//console.log(err);
-            res.end(error_message(3));
-            return;
+            return (error_message(3));
         }
         if(!row.affectedRows) {
-            res.end(error_message(1));
-            return;
+            return (error_message(1));
         }
-        db.query("SELECT * FROM posts WHERE id = ?;", req.body.post, function(err, row) {
+        db.query("SELECT * FROM posts WHERE id = ?;", query.body.post, function(err, row) {
             row[0].isApproved = !!row[0].isApproved;
             row[0].isHighlighted = !!row[0].isHighlighted;
             row[0].isDeleted = !!row[0].isDeleted;
             row[0].isEdited = !!row[0].isEdited;
             date = JSON.stringify(row[0].date);
             row[0].date = date.substr(1,10) + " " + date.substr(12,8);
-            var answ = {code: 0, response: row[0]};
-            res.end(JSON.stringify(answ));
+            let result = {code: 0, response: row[0]};
+            return (JSON.stringify(result));
         });
     });
 };
