@@ -1,7 +1,7 @@
 const db = require('../db');
 const Executor = require('../class/executor');
 
-module.exports.details = function(req, res) {
+module.exports.details = new Executor((query)=>{
     if(!req.query.user) {
         res.end(error_message(2));
         return;
@@ -35,7 +35,7 @@ module.exports.details = function(req, res) {
     });
 };
 
-module.exports.listPosts = function(req, res) {
+module.exports.listPosts = new Executor((query)=>{
     var query = "SELECT * FROM posts WHERE user = '" + req.query.user + "' ";
     if(req.query.since)
         query += "AND date > '" + req.query.since + "' ";
@@ -59,7 +59,7 @@ module.exports.listPosts = function(req, res) {
     });
 };
 
-module.exports.listFollowers = function(req, res) {
+module.exports.listFollowers = new Executor((query)=>{
     var query = "SELECT about, email, GROUP_CONCAT(DISTINCT f2.users_email_follower) AS followers, GROUP_CONCAT(DISTINCT f3.users_email_following) AS following, " +
         "id, isAnonymous, name, GROUP_CONCAT(DISTINCT s.threads_id) AS subscriptions, username " +
         "FROM followers f1 JOIN users u ON u.email = f1.users_email_follower " +
@@ -90,7 +90,7 @@ module.exports.listFollowers = function(req, res) {
     });
 };
 
-module.exports.listFollowing = function(req, res) {
+module.exports.listFollowing = new Executor((query)=>{
     var query = "SELECT about, email, GROUP_CONCAT(DISTINCT f2.users_email_follower) AS followers, GROUP_CONCAT(DISTINCT f3.users_email_following) AS following, " +
         "id, isAnonymous, name, GROUP_CONCAT(DISTINCT s.threads_id) AS subscriptions, username " +
         "FROM followers f1 JOIN users u ON u.email = f1.users_email_following " +
@@ -121,7 +121,7 @@ module.exports.listFollowing = function(req, res) {
     });
 };
 
-module.exports.create = function(req, res) {
+module.exports.create = new Executor(null, (query, body)=>{
     db.query("INSERT INTO users SET ?;", req.body, function(err, rows) {
         if(err) {
             res.end(error_message(5));
@@ -135,7 +135,7 @@ module.exports.create = function(req, res) {
     });
 };
 
-module.exports.update = function(req, res) {
+module.exports.update = new Executor(null, (query, body)=>{
     if(!req.body.about || !req.body.user || !req.body.name) {
         res.end(error_message(3));
         return;
@@ -158,7 +158,7 @@ module.exports.update = function(req, res) {
     });
 };
 
-module.exports.follow = function(req, res) {
+module.exports.follow = new Executor(null, (query, body)=>{
     if(!req.body.follower || !req.body.followee) {
         res.end(error_message(3));
         return;
@@ -195,7 +195,7 @@ module.exports.follow = function(req, res) {
     });
 };
 
-module.exports.unfollow = function(req, res) {
+module.exports.unfollow = new Executor(null, (query, body)=>{
     if(!req.body.follower || !req.body.followee) {
         res.end(error_message(3));
         return;

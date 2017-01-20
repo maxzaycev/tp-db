@@ -1,7 +1,7 @@
 const db = require('../db');
 const Executor = require('../class/executor');
 
-module.exports.details = function(req, res) {
+module.exports.details = new Executor((query)=>{
     if(!req.query.thread) {
         res.end(error_message(2));
         return;
@@ -50,7 +50,7 @@ module.exports.details = function(req, res) {
     });
 };
 
-module.exports.list = function(req, res) {
+module.exports.list = new Executor((query)=>{
     if(!req.query.user && !req.query.forum) {
         res.end(error_message(3));
         return;
@@ -82,7 +82,7 @@ module.exports.list = function(req, res) {
     });
 };
 
-module.exports.listPosts = function(req, res) {
+module.exports.listPosts = new Executor((query)=>{
     if(!req.query.thread) {
         res.end(error_message(3));
         return;
@@ -174,7 +174,7 @@ module.exports.create = function(req, res) {
     });
 };
 
-module.exports.remove = function(req, res) {
+module.exports.remove = new Executor(null, (query, body)=>{
     var query = "UPDATE threads SET isDeleted = true, posts = 0 WHERE id = " + req.body.thread + ";";
     db.query(query, function(err, rows) {
         if(err || !rows.affectedRows) {
@@ -188,7 +188,7 @@ module.exports.remove = function(req, res) {
     });
 };
 
-module.exports.restore = function(req, res) {
+module.exports.restore = new Executor(null, (query, body)=>{
     var query = "UPDATE posts SET isDeleted = false WHERE thread = " + req.body.thread + ";";
     db.query(query, function(err, rows) {
         query = "UPDATE threads SET isDeleted = false, posts = " + rows.affectedRows + " WHERE id = " + req.body.thread + ";";
@@ -202,7 +202,7 @@ module.exports.restore = function(req, res) {
     });
 };
 
-module.exports.close = function(req, res) {
+module.exports.close = new Executor(null, (query, body)=>{
     var query = "UPDATE threads SET isClosed = true WHERE id = " + req.body.thread + ";";
     db.query(query, function(err, rows) {
         if(err || !rows.affectedRows) {
@@ -213,7 +213,7 @@ module.exports.close = function(req, res) {
     });
 };
 
-module.exports.open = function(req, res) {
+module.exports.open = new Executor(null, (query, body)=> {
     var query = "UPDATE threads SET isClosed = false WHERE id = " + req.body.thread + ";";
     db.query(query, function(err, rows) {
         if(err || !rows.affectedRows) {
@@ -224,7 +224,7 @@ module.exports.open = function(req, res) {
     });
 };
 
-module.exports.update = function(req, res) {
+module.exports.update = new Executor(null, (query, body)=>{
     if(!req.body.message || !req.body.slug || !req.body.thread) {
         res.end(error_message(3));
         return;
@@ -247,7 +247,7 @@ module.exports.update = function(req, res) {
     });
 };
 
-module.exports.vote = function(req, res) {
+module.exports.vote = new Executor(null, (query, body)=>{
     if(!req.body.vote || !req.body.thread) {
         res.end(error_message(3));
         return;
@@ -272,7 +272,7 @@ module.exports.vote = function(req, res) {
     });
 };
 
-module.exports.subscribe = function(req, res) {
+module.exports.subscribe = new Executor(null, (query, body)=>{
     var replace = {users_email:req.body.user, threads_id:req.body.thread};
     db.query("INSERT INTO subscriptions SET ?", replace, function(err, rows) {
         if(err || !rows.affectedRows) {

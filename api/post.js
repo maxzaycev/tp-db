@@ -1,7 +1,7 @@
 const db = require('../db');
 const Executor = require('../class/executor');
 
-module.exports.list = function(req, res) {
+module.exports.list = new Executor((query)=>{
     if (!req.query.forum && !req.query.thread) {
         res.end(error_message(3));
         return;
@@ -37,7 +37,7 @@ module.exports.list = function(req, res) {
     });
 };
 
-module.exports.details = function(req, res) {
+module.exports.details = new Executor((query)=>{
     if(!req.query.post) {
         res.end(error_message(2));
         return;
@@ -53,7 +53,7 @@ module.exports.details = function(req, res) {
     });
 };
 
-module.exports.create = function(req, res) {
+module.exports.create = new Executor(null, (query, body)=>{
     db.query("INSERT INTO posts SET ?", req.body, function(err, row) {
         if (err) {
            ;//console.log(err);
@@ -87,7 +87,7 @@ module.exports.create = function(req, res) {
     });
 };
 
-module.exports.remove = function(req, res) {
+module.exports.remove = new Executor(null, (query, body)=>{
     if (!req.body.post) {
         res.end(error_message(2));
         return;
@@ -108,7 +108,7 @@ module.exports.remove = function(req, res) {
     });
 };
 
-module.exports.restore = function(req, res) {
+module.exports.restore = new Executor(null, (query, body)=> {
     if (!req.body.post) {
         res.end(error_message(2));
         return;
@@ -129,7 +129,7 @@ module.exports.restore = function(req, res) {
     });
 };
 
-module.exports.update = function(req, res) {
+module.exports.update = new Executor(null, (query, body)=>{
     if (!req.body.post || !req.body.message) {
         res.end(error_message(2));
         return;
@@ -158,7 +158,7 @@ module.exports.update = function(req, res) {
     });
 };
 
-module.exports.vote = function(req, res) {
+module.exports.vote = new Executor(null, (query, body)=>{
     if (!req.body.post || !(req.body.vote == 1 || req.body.vote == -1)) {
         res.end(error_message(2));
         return;

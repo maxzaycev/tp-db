@@ -1,7 +1,7 @@
 const db = require('../db');
 const Executor = require('../class/executor');
 
-module.exports.details = function (req, res) {
+module.exports.details = new Executor((query)=>{
     if (!req.query.forum) {
         res.end(error_message(3));
         return;
@@ -53,7 +53,7 @@ module.exports.details = function (req, res) {
     })
 };
 
-module.exports.listPosts = function(req, res) {
+module.exports.listPosts = new Executor((query)=>{
     var query_s = "SELECT p.*";
     var query_f = "FROM posts p ";
     var query_w = "WHERE p.forum = '" + req.query.forum + "' ";
@@ -129,7 +129,7 @@ module.exports.listPosts = function(req, res) {
     });
 };
 
-module.exports.listThreads = function(req, res) {
+module.exports.listThreads = new Executor((query)=>{
     var query_s = "SELECT t.*";
     var query_f = "FROM threads t ";
     var query_w = "WHERE t.forum = '" + req.query.forum + "' ";
@@ -218,7 +218,7 @@ module.exports.listThreads = function(req, res) {
     });
 };
 
-module.exports.listUsers = function(req, res) {
+module.exports.listUsers = new Executor((query)=>{
     /*var query = "SELECT about, email, GROUP_CONCAT(DISTINCT f2.users_email_follower) AS followers, GROUP_CONCAT(DISTINCT f3.users_email_following) AS following, " +
         "u.id, isAnonymous, name, GROUP_CONCAT(DISTINCT s.threads_id) AS subscriptions, username " +
         "FROM posts p JOIN users u ON u.email = p.user " +
@@ -278,7 +278,7 @@ module.exports.listUsers = function(req, res) {
 };
 
 
-module.exports.create = function(req, res) {
+module.exports.create = new Executor(null, (query, body)=>{
     var instead = [req.body.name, req.body.short_name, req.body.user];
     db.query("INSERT INTO forums VALUES(NULL, ?, ?, ?);", instead,
         function(err, rows) {
