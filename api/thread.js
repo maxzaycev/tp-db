@@ -160,7 +160,7 @@ module.exports.listPosts = new Executor((query)=>{
 };
 
 
-module.exports.create = function(req, res) {
+module.exports.create = new Executor(null, (query, body)=>{
     db.query("INSERT INTO threads SET ?;", req.body, function(err, rows) {
         if(err) {
             res.end(error_message(3));
@@ -284,7 +284,7 @@ module.exports.subscribe = new Executor(null, (query, body)=>{
     });
 };
 
-module.exports.unsubscribe = function(req, res) {
+module.exports.unsubscribe = new Executor(null, (query, body)=> {
     var query = "DELETE FROM subscriptions WHERE users_email = '" + req.body.user + "' AND threads_id = " + req.body.thread + ";";
     db.query(query, function(err, rows) {
         if(err || !rows.affectedRows) {
