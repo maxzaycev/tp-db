@@ -6,25 +6,25 @@ module.exports.user = require('./user');
 module.exports.thread = require('./thread');
 module.exports.post = require('./post');
 
-const clear = function *(null, (query, body)=>{
+module.exports.clear = new Executor(null, (query, body)=>{
 	return new Promise((resolve) => {
-		db.query('truncate table users');
-		db.query('truncate table threads');
-		db.query('truncate table posts');
-		db.query('truncate table forums');
+		db.query('TRUNCATE TABLE users');
+		db.query('TRUNCATE TABLE threads');
+		db.query('TRUNCATE TABLE posts');
+		db.query('TRUNCATE TABLE forums');
 
-		yield {"code": 0, "response": "OK"};
+		return {"code": 0, "response": "OK"};
 	});
 };
 
-const status = function *((query)=>{
+module.exports.status = new Executor((query)=>{
 	return new Promise((resolve) => {
-		db.query(`select
-					count(u.id) AS user,
-					count(p.isDeleted) AS post,
-					count(t.isDeleted) AS thread,
-					count(f.id) AS forum
-				from
+		db.query(`SELECT
+					COUNT(u.id) AS user,
+					COUNT(p.isDeleted) AS post,
+					COUNT(t.isDeleted) AS thread,
+					COUNT(f.id) AS forum
+				FROM
 					users AS u,
 					posts AS p,
 					threads AS t,
@@ -32,6 +32,3 @@ const status = function *((query)=>{
 	});
 
 }, null;
-
-module.exports.clear = clear;
-module.exports.status = status;
