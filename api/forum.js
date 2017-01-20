@@ -213,18 +213,13 @@ module.exports.listThreads = new Executor((query)=>{
 };
 
 module.exports.listUsers = new Executor((query)=>{
-    /*let query = "SELECT about, email, GROUP_CONCAT(DISTINCT f2.users_email_follower) AS followers, GROUP_CONCAT(DISTINCT f3.users_email_following) AS following, " +
+    let query = "SELECT about, email, GROUP_CONCAT(DISTINCT f2.users_email_follower) AS followers, GROUP_CONCAT(DISTINCT f3.users_email_following) AS following, " +
         "u.id, isAnonymous, name, GROUP_CONCAT(DISTINCT s.threads_id) AS subscriptions, username " +
         "FROM posts p JOIN users u ON u.email = p.user " +
         "LEFT JOIN followers f2 ON u.email = f2.users_email_following " +
         "LEFT JOIN followers f3 ON u.email = f3.users_email_follower " +
         "LEFT JOIN subscriptions s ON u.email = s.users_email " +
-        "WHERE p.forum = '" + query.query.forum + "' ";*/
-
-    let query = "SELECT about, email, u.id, isAnonymous, name, u.username " +
-        "FROM posts p JOIN users u ON u.email = p.user " +
         "WHERE p.forum = '" + query.query.forum + "' ";
-    query += "GROUP BY p.userName ORDER BY p.userName ";
     if(query.query.order != "asc")
         query += "DESC ";
     if(query.query.limit)
